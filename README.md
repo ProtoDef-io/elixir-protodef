@@ -1,6 +1,8 @@
 # ProtoDef
 
-**TODO: Add description**
+ProtoDef compiler written in Elixir.
+
+Compatible with https://github.com/roblabla/ProtoDef.
 
 ## Installation
 
