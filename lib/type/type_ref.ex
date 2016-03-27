@@ -1,6 +1,39 @@
 defmodule ProtoDef.Type.TypeRef do
 
-  defstruct type_id: nil, args: nil, ident: nil
+  defstruct kind: nil, make_encoder: nil, make_decoder: nil, args: nil, ident: nil,
+  type_id: nil, encode: nil, decode: nil
+
+  def preprocess_typeref(type_id, args, ctx) do
+    type = ProtoDef.Compiler.Context.type(ctx, type_id)
+    if type == nil do
+      raise "Undefined typeref: #{type_id}"
+    end
+    inner_preprocess_typeref(type, type_id, args, ctx)
+  end
+
+  defp inner_preprocess_typeref({:inline, type}, _type_id, _args, ctx) do
+    ProtoDef.Compiler.Preprocess.process_type(type, ctx)
+  end
+  defp inner_preprocess_typeref({:simple_gen, make_encoder, make_decoder}, type_id, args, ctx) do
+    %__MODULE__{
+      kind: :simple_gen,
+      make_encoder: make_encoder,
+      make_decoder: make_decoder,
+      args: args,
+      type_id: type_id,
+    }
+  end
+  defp inner_preprocess_typeref({:simple, encode, decode}, type_id, args, ctx) do
+    %__MODULE__{
+      kind: :simple,
+      encode: encode,
+      decode: decode,
+      args: args,
+      type_id: type_id,
+    }
+  end
+
+  def structure(type, _ctx), do: {:type_ref, type.type_id}
 
   def assign_vars(descr, num, ctx) do
     {ident, num} = ProtoDef.Compiler.AssignIdents.make_ident(num, ctx)
@@ -14,14 +47,18 @@ defmodule ProtoDef.Type.TypeRef do
     descr
   end
 
-  def decoder_ast(descr, ctx) do
-    type_descr = ProtoDef.Compiler.Context.type(ctx, descr.type_id)
-
-    if type_descr == nil do
-      raise ProtoDef.CompileError, message: "No TypeRef type found: #{descr.type_id}"
+  def decoder_ast(%{kind: :simple} = descr, _ctx) do
+    {module, name} = descr.decode
+    quote do
+      apply(unquote(module), unquote(name), [unquote(@data_var)])
     end
-
-    type_descr.gen_decoder.(descr.args, ctx)
+  end
+  
+  def encoder_ast(%{kind: :simple} = descr, _ctx) do
+    {module, name} = descr.encode
+    quote do
+      apply(unquote(module), unquote(name), [unquote(@input_var)])
+    end
   end
 
 end

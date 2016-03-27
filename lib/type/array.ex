@@ -69,7 +69,7 @@ defmodule ProtoDef.Type.Array do
     count_var = Macro.var(:count, ProtoDef.Type.Array)
     count_encoder = ProtoDef.Compiler.Count.encoder_ast(descr.count, count_var, ctx)
     item_encoder = ProtoDef.Compiler.GenAst.encoder(descr.type, ctx)
-    ret = quote do
+    quote do
       with do
         unquote(count_var) = Enum.count(unquote(@input_var))
         count_head = unquote(count_encoder)

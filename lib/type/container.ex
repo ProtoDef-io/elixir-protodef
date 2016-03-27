@@ -39,7 +39,7 @@ defmodule ProtoDef.Type.Container do
 
     %{
       anon: anon,
-      name: (if name, do: String.to_atom(name)),
+      name: (if name, do: ctx.parse_name.(name)),
       type: Preprocess.process_type(type, ctx),
       ident: nil,
     }

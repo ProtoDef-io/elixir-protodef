@@ -58,7 +58,7 @@ defmodule ProtoDef.Compiler.Count do
 
   def decoder_ast(%__MODULE__{kind: :fixed} = cnt, ctx) do
     quote do
-      {unquote(cnt.value), data}
+      {unquote(cnt.value), unquote(ProtoDef.Type.data_var)}
     end
   end
   def decoder_ast(%__MODULE__{kind: :field} = cnt, ctx) do
@@ -91,7 +91,7 @@ defmodule ProtoDef.Compiler.Count do
     encoder = ProtoDef.Compiler.GenAst.encoder(cnt.value, ctx)
     quote do
       with do
-        unquote(@input_var) = unquote(count_var)
+        unquote(ProtoDef.Type.input_var) = unquote(count_var)
         unquote(encoder)
       end
     end

@@ -13,10 +13,7 @@ defmodule ProtoDef.Compiler.Preprocess do
     if type_mod do
       apply(type_mod, :preprocess, [args, ctx])
     else
-      %ProtoDef.Type.TypeRef{
-        type_id: type_id,
-        args: args,
-      }
+      ProtoDef.Type.TypeRef.preprocess_typeref(type_id, args, ctx)
     end
   end
 

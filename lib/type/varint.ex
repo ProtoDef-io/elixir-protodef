@@ -46,7 +46,7 @@ defmodule ProtoDef.Type.Varint do
   defp inner_decode_varint("", _, _), do: :incomplete
   defp inner_decode_varint(_, _, _), do: :error
 
-  def encode_varint(num) when num <= 127, do: num
+  def encode_varint(num) when num <= 127, do: <<num>>
   def encode_varint(num) when num >= 128 do
     <<1::1, band(num, 127)::7, encode_varint(num >>> 7)::binary>>
   end

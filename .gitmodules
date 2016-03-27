@@ -1,0 +1,3 @@
+[submodule "priv/protodef-spec"]
+	path = priv/protodef-spec
+	url = https://github.com/rom1504/ProtoDef.git

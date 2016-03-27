@@ -50,4 +50,11 @@ defmodule ProtoDef.CompilerTest do
     test_transpose(definition, data, res)
   end
 
+  test "transpose pstring" do
+    definition = ["pstring", %{"countType" => "i8"}]
+    data = <<8, "testtest">>
+    res = "testtest"
+    test_transpose(definition, data, res)
+  end
+
 end

@@ -19,7 +19,13 @@ defmodule ProtoDef.Type.Void do
 
   def decoder_ast(descr, ctx) do
     quote do
-      {nil, data}
+      {nil, unquote(@data_var)}
+    end
+  end
+
+  def encoder_ast(descr, ctx) do
+    quote do
+      <<>>
     end
   end
 end

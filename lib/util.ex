@@ -8,4 +8,6 @@ defmodule ProtoDef.Util do
     end
   end
 
+  def camel_string_to_snake_atom(name), do: name |> Macro.underscore |> String.to_atom
+
 end

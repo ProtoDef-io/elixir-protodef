@@ -1,8 +1,8 @@
 defmodule ProtoDef.Type.Option do
+  use ProtoDef.Type
+
   alias ProtoDef.Compiler.Preprocess
   alias ProtoDef.Compiler.Structure
-
-  @behaviour ProtoDef.Type
 
   defstruct type: nil, ident: nil
 
@@ -33,14 +33,28 @@ defmodule ProtoDef.Type.Option do
     item_ast = ProtoDef.Compiler.GenAst.decoder(descr.type, ctx)
     quote do
       with do
-        <<has_field::unsigned-integer-1*8, data::binary>> = data
+        <<has_field::unsigned-integer-1*8, unquote(@data_var)::binary>> = unquote(@data_var)
         if has_field == 1 do
           unquote(item_ast)
         else
-          {nil, data}
+          {nil, unquote(@data_var)}
         end
       end
     end
   end
 
+  def encoder_ast(descr, ctx) do
+    item_ast = ProtoDef.Compiler.GenAst.encoder(descr.type, ctx)
+    quote do
+      with do
+        has_field = if unquote(@input_var), do: 1, else: 0
+        if has_field == 1 do
+          [<<has_field::1*8>>, unquote(item_ast)]
+        else
+          <<has_field::1*8>>
+        end
+      end
+    end
   end
+
+end

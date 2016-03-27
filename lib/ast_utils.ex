@@ -6,4 +6,6 @@ defmodule ProtoDef.AstUtils do
     |> Enum.concat
   end
 
+  def extract_block({:__block__, _, [expr]}), do: expr
+
 end

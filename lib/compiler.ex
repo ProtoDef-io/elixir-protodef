@@ -5,7 +5,9 @@ defmodule ProtoDef.Compiler do
   end
 
   defmodule Context do
-    defstruct native_types: %{}, params: %{}, types: %{}
+    defstruct native_types: %{}, params: %{}, types: %{}, 
+    parse_name: &ProtoDef.Util.camel_string_to_snake_atom/1
+
 
     @type t :: %__MODULE__{}
 
@@ -30,9 +32,9 @@ defmodule ProtoDef.Compiler do
       ctx.types[type_name]
     end
 
-    def type_add(ctx, type_name, type_kind, definition = %CustomType{}) when type_kind in [:inline_json] do
+    def type_add(ctx, type_name, definition) do
       %{ ctx |
-        types: Map.put(ctx.types, type_name, {type_kind, definition}),
+        types: Map.put(ctx.types, type_name, definition),
       }
     end
   end
@@ -47,12 +49,16 @@ defmodule ProtoDef.Compiler do
     # Resolve field references
     descr = ProtoDef.Compiler.Resolve.run(descr, [], ctx)
 
+    # Generate structure
+    structure = ProtoDef.Compiler.Structure.gen_for_type(descr, ctx)
+
     # Generate the Elixir AST
     decoder_ast = ProtoDef.Compiler.GenAst.decoder(descr, ctx)
     encoder_ast = ProtoDef.Compiler.GenAst.encoder(descr, ctx)
 
     %{
       descr: descr,
+      structure: structure,
       decoder_ast: decoder_ast,
       encoder_ast: encoder_ast,
     }

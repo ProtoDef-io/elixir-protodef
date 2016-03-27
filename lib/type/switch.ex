@@ -61,7 +61,7 @@ defmodule ProtoDef.Type.Switch do
     field_types = Enum.map(descr.fields, fn item -> Structure.gen_for_type(item.type, ctx) end)
     case descr.default do
       nil -> field_types
-      typ -> [Structure.gen_for_type(typ, ctx) | field_types]
+      typ -> [Structure.gen_for_type(typ.type, ctx) | field_types]
     end
     |> Enum.dedup
   end
@@ -122,15 +122,16 @@ defmodule ProtoDef.Type.Switch do
     {comp_container_ident, comp_field} = descr.compare_to
     comp_container_var = Macro.var(comp_container_ident, nil)
 
-    match_var = Macro.var(:match_var, nil)
-    cases_ast = Enum.map(descr.fields, &(decoder_ast_case(&1, ctx)))
+    match_var = Macro.var(:match_var, __MODULE__)
+    cases_ast = Enum.map(descr.fields, &(decoder_ast_case(&1, match_var, ctx)))
     default_case_ast = decoder_ast_default_case(descr.default, ctx)
+
+    cases = cases_ast ++ default_case_ast
 
     quote do
       unquote(match_var) = unquote(comp_container_var)[unquote(comp_field)]
-      case unquote(match_var) do
-        unquote_splicing(cases_ast)
-        unquote(default_case_ast)
+      cond do
+        unquote(cases)
       end
     end
   end
@@ -140,12 +141,13 @@ defmodule ProtoDef.Type.Switch do
       true -> unquote(item_ast)
     end
   end
-  def decoder_ast_case(item, ctx) do
+  def decoder_ast_case(item, match_var, ctx) do
     match_ast = Macro.escape(item.match)
     item_ast = ProtoDef.Compiler.GenAst.decoder(item.type, ctx)
     quote do
-      ProtoDef.Type.Switch.javascript_eq(unquote(match_ast), val) -> unquote(item_ast)
+      ProtoDef.Type.Switch.javascript_eq(unquote(match_ast), unquote(match_var)) -> unquote(item_ast)
     end
+    |> hd
   end
 
   # TODO: This is bad. Figure this out statically
@@ -164,4 +166,37 @@ defmodule ProtoDef.Type.Switch do
     (match == "true") == val
   end
 
+  # Encoder generator pass
+
+  def encoder_ast(descr, ctx) do
+    {comp_container_ident, comp_field} = descr.compare_to
+    comp_container_var = Macro.var(comp_container_ident, nil)
+
+    match_var = Macro.var(:match_var, __MODULE__)
+    cases_ast = Enum.map(descr.fields, &(encoder_ast_case(&1, match_var, ctx)))
+    default_case_ast = encoder_ast_default_case(descr.default, ctx)
+
+    cases = cases_ast ++ default_case_ast
+
+    quote do
+      unquote(match_var) = unquote(comp_container_var)[unquote(comp_field)]
+      cond do
+        unquote(cases)
+      end
+    end
+  end
+  def encoder_ast_default_case(item, ctx) do
+    item_ast = ProtoDef.Compiler.GenAst.encoder(item.type, ctx)
+    quote do
+      true -> unquote(item_ast)
+    end
+  end
+  def encoder_ast_case(item, match_var, ctx) do
+    match_ast = Macro.escape(item.match)
+    item_ast = ProtoDef.Compiler.GenAst.encoder(item.type, ctx)
+    quote do
+      ProtoDef.Type.Switch.javascript_eq(unquote(match_ast), unquote(match_var)) -> unquote(item_ast)
+    end
+    |> hd
+  end
 end
