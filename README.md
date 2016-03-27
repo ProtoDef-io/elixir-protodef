@@ -2,11 +2,11 @@
 
 ProtoDef compiler written in Elixir.
 
-Compatible with https://github.com/roblabla/ProtoDef.
+(mostly) Compatible with https://github.com/ProtoDef-io/ProtoDef.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+elixir-protodef is availible in [Hex](https://hex.pm/packages/proto_def). The package can be installed as:
 
   1. Add proto_def to your list of dependencies in `mix.exs`:
 
