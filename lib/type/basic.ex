@@ -1,9 +1,9 @@
 numeric_types = [
   # 8 bit
   {I8, [:integer, :signed], quote do: signed-integer-1*8},
+  {LI8, [:integer, :signed], quote do: little-signed-integer-1*8},
   {U8, [:integer, :unsigned], quote do: unsigned-integer-1*8},
-  {LI8, [:integer, :signed], quote do: signed-integer-1*8},
-  {LU8, [:integer, :unsigned], quote do: unsigned-integer-1*8},
+  {LU8, [:integer, :unsigned], quote do: little-unsigned-integer-1*8},
   # 16 bit
   {I16, [:integer, :signed], quote do: signed-integer-2*8},
   {LI16, [:integer, :signed], quote do: little-signed-integer-2*8}
