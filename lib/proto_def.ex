@@ -6,6 +6,7 @@ defmodule ProtoDef do
       # Conditionals
       :switch => Type.Switch,
       :option => Type.Option,
+      :mapper => Type.Mapper,
 
       # Basic numeric
       :u8 => Type.U8,
