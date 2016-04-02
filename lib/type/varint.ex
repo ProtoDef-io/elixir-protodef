@@ -20,12 +20,29 @@ defmodule ProtoDef.Type.Varint do
 
   def decoder_ast(_descr, _ctx) do
     quote do
-      ProtoDef.Type.Varint.decode_varint!(unquote(@data_var))
+      ProtoDef.Type.Varint.decode_varint_signed!(unquote(@data_var))
     end
   end
   def encoder_ast(_descr, _ctx) do
     quote do
-      ProtoDef.Type.Varint.encode_varint(unquote(@input_var))
+      ProtoDef.Type.Varint.encode_varint_signed(unquote(@input_var))
+    end
+  end
+
+  def decode_varint_signed!(data) do
+    {:ok, ret} = decode_varint_signed(data)
+    ret
+  end
+  def decode_varint_signed(data) do
+    case decode_varint(data) do
+      {:ok, {num, rest}} ->
+        num = if (num &&& (1 <<< 31)) == 0 do
+          num
+        else
+          num - (1 <<< 32)
+        end
+        {:ok, {num, rest}}
+      err -> err
     end
   end
 
@@ -45,6 +62,14 @@ defmodule ProtoDef.Type.Varint do
   defp inner_decode_varint(_, num, _) when num >= (64-7), do: :too_big
   defp inner_decode_varint("", _, _), do: :incomplete
   defp inner_decode_varint(_, _, _), do: :error
+
+  def encode_varint_signed(data) do
+    if data < 0 do
+      encode_varint(data + (1 <<< 32))
+    else
+      encode_varint(data)
+    end
+  end
 
   def encode_varint(num) when num <= 127, do: <<num>>
   def encode_varint(num) when num >= 128 do
