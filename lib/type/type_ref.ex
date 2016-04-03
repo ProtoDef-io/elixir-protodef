@@ -1,5 +1,7 @@
 defmodule ProtoDef.Type.TypeRef do
 
+  use ProtoDef.Type
+
   defstruct kind: nil, make_encoder: nil, make_decoder: nil, args: nil, ident: nil,
   type_id: nil, encode: nil, decode: nil
 
