@@ -69,7 +69,7 @@ defmodule ProtoDef.Compiler.Count do
     end
   end
   def decoder_ast(%__MODULE__{kind: :prefix_type} = cnt, ctx) do
-    ProtoDef.Compiler.GenAst.decoder(cnt.value, ctx)
+    ProtoDef.Compiler.GenElixirAst.decoder(cnt.value, ctx)
   end
 
   # Encoder generator pass
@@ -88,7 +88,7 @@ defmodule ProtoDef.Compiler.Count do
     end
   end
   def encoder_ast(%__MODULE__{kind: :prefix_type} = cnt, count_var, ctx) do
-    encoder = ProtoDef.Compiler.GenAst.encoder(cnt.value, ctx)
+    encoder = ProtoDef.Compiler.GenElixirAst.encoder(cnt.value, ctx)
     quote do
       with do
         unquote(ProtoDef.Type.input_var) = unquote(count_var)

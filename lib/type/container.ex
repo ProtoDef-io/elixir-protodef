@@ -23,7 +23,7 @@ defmodule ProtoDef.Type.Container do
     name = item["name"]
     anon = item["anon"] == true
     type = item["type"]
-    
+
     if !name && !anon do
       raise ProtoDef.CompileError, message: @name_and_anon_unset_error
     end
@@ -76,7 +76,7 @@ defmodule ProtoDef.Type.Container do
       items: items,
       ident: ident,
     }
-    
+
     {descr, ident, num}
   end
   def assign_field(item, num, ctx) do
@@ -104,63 +104,6 @@ defmodule ProtoDef.Type.Container do
     }
   end
 
-  # Decoder AST pass
-
-  def decoder_ast(descr, ctx) do
-    var = Macro.var(descr.ident, nil)
-    fields = Enum.map(descr.items, &item_decoder_ast(&1, var, ctx))
-
-    quote do
-      with do
-        unquote(var) = %{}
-        unquote_splicing(ProtoDef.AstUtils.merge_blocks(fields))
-        {unquote(var), unquote(@data_var)}
-      end
-    end
-  end
-  def item_decoder_ast(%{anon: true} = item, var, ctx) do
-    item_decoder = ProtoDef.Compiler.GenAst.decoder(item.type, ctx)
-    quote do
-      {field_val, unquote(@data_var)} = unquote(item_decoder)
-      unquote(var) = Map.merge(unquote(var), field_val)
-    end
-  end
-  def item_decoder_ast(%{anon: false} = item, var, ctx) do
-    item_decoder = ProtoDef.Compiler.GenAst.decoder(item.type, ctx)
-    quote do
-      {field_val, unquote(@data_var)} = unquote(item_decoder)
-      unquote(var) = Map.put(unquote(var), unquote(item.name), field_val)
-    end
-  end
-
-  # Encoder AST pass
-
-  def encoder_ast(descr, ctx) do
-    var = Macro.var(descr.ident, nil)
-    fields = Enum.map(descr.items, &item_encoder_ast(&1, var, ctx))
-
-    quote do
-      with do
-        result = []
-        unquote(var) = unquote(@input_var)
-        unquote_splicing(ProtoDef.AstUtils.merge_blocks(fields))
-        result
-      end
-    end
-  end
-  def item_encoder_ast(%{anon: true} = item, var, ctx) do
-    item_encoder = ProtoDef.Compiler.GenAst.encoder(item.type, ctx)
-    quote do
-      unquote(@input_var) = unquote(var)
-      result = [result, unquote(item_encoder)]
-    end
-  end
-  def item_encoder_ast(%{anon: false} = item, var, ctx) do
-    item_encoder = ProtoDef.Compiler.GenAst.encoder(item.type, ctx)
-    quote do
-      unquote(@input_var) = unquote(var)[unquote(item.name)]
-      result = [result, unquote(item_encoder)]
-    end
-  end
 
 end
+

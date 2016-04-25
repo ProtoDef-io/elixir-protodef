@@ -15,23 +15,4 @@ defmodule ProtoDef.Type.Bool do
     {descr, ident, num+1}
   end
 
-  def decoder_ast(descr, ctx) do
-    quote do
-      with do
-        <<val::unsigned-integer-1*8, unquote(@data_var)::binary>> = unquote(@data_var)
-        {val == 1, unquote(@data_var)}
-      end
-    end
-  end
-
-  def encoder_ast(descr, ctx) do
-    quote do
-      if unquote(@input_var) do
-        <<1::1*8>>
-      else
-        <<0::1*8>>
-      end
-    end
-  end
-
 end
