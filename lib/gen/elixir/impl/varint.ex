@@ -1,4 +1,4 @@
-defmodule ProtoDef.Gen.Elixir.Varint do
+defmodule ProtoDef.Gen.Elixir.Impl.Varint do
   use Bitwise
 
   def decode_varint_signed!(data) do
@@ -50,18 +50,18 @@ defmodule ProtoDef.Gen.Elixir.Varint do
 
 end
 
-defimpl ProtoDef.Compiler.GenElixirAst, for: ProtoDef.Type.Varint do
+defimpl ProtoDef.Gen.Elixir.Protocol, for: ProtoDef.Type.Varint do
   @data_var ProtoDef.Type.data_var
   @input_var ProtoDef.Type.input_var
 
   def decoder(_descr, _ctx) do
     quote do
-      ProtoDef.Gen.Elixir.Varint.decode_varint_signed!(unquote(@data_var))
+      ProtoDef.Gen.Elixir.Impl.Varint.decode_varint_signed!(unquote(@data_var))
     end
   end
   def encoder(_descr, _ctx) do
     quote do
-      ProtoDef.Gen.Elixir.Varint.encode_varint_signed(unquote(@input_var))
+      ProtoDef.Gen.Elixir.Impl.Varint.encode_varint_signed(unquote(@input_var))
     end
   end
 

@@ -1,10 +1,10 @@
-defimpl ProtoDef.Compiler.GenElixirAst, for: ProtoDef.Type.Option do
+defimpl ProtoDef.Gen.Elixir.Protocol, for: ProtoDef.Type.Option do
 
   @data_var ProtoDef.Type.data_var
   @input_var ProtoDef.Type.input_var
 
   def decoder(descr, ctx) do
-    item_ast = ProtoDef.Compiler.GenElixirAst.decoder(descr.type, ctx)
+    item_ast = ProtoDef.Gen.Elixir.Protocol.decoder(descr.type, ctx)
     quote do
       with do
         <<has_field::unsigned-integer-1*8, unquote(@data_var)::binary>> = unquote(@data_var)
@@ -18,7 +18,7 @@ defimpl ProtoDef.Compiler.GenElixirAst, for: ProtoDef.Type.Option do
   end
 
   def encoder(descr, ctx) do
-    item_ast = ProtoDef.Compiler.GenElixirAst.encoder(descr.type, ctx)
+    item_ast = ProtoDef.Gen.Elixir.Protocol.encoder(descr.type, ctx)
     quote do
       with do
         has_field = if unquote(@input_var), do: 1, else: 0

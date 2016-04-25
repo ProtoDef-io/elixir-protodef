@@ -30,7 +30,7 @@ for {mod_name, binary_format} <- type_defs do
   full_mod_name = Module.concat(ProtoDef.Type, mod_name)
 
   body = quote do
-    defimpl ProtoDef.Compiler.GenElixirAst, for: unquote(full_mod_name) do
+    defimpl ProtoDef.Gen.Elixir.Protocol, for: unquote(full_mod_name) do
 
       @data_var ProtoDef.Type.data_var
       @input_var ProtoDef.Type.input_var

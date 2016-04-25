@@ -1,4 +1,4 @@
-defimpl ProtoDef.Compiler.GenElixirAst, for: ProtoDef.Type.Bool do
+defimpl ProtoDef.Gen.Elixir.Protocol, for: ProtoDef.Type.Bool do
 
   @data_var ProtoDef.Type.data_var
   @input_var ProtoDef.Type.input_var

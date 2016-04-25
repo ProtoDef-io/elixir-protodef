@@ -1,4 +1,4 @@
-defmodule ProtoDef.Gen.Elixir.Switch do
+defmodule ProtoDef.Gen.Elixir.Impl.Switch do
 
   # TODO: This is bad. Figure this out statically
   def javascript_eq("0x" <> hex, val) when is_integer(val) do
@@ -18,7 +18,7 @@ defmodule ProtoDef.Gen.Elixir.Switch do
 
 end
 
-defimpl ProtoDef.Compiler.GenElixirAst, for: ProtoDef.Type.Switch do
+defimpl ProtoDef.Gen.Elixir.Protocol, for: ProtoDef.Type.Switch do
 
   @data_var ProtoDef.Type.data_var
   @input_var ProtoDef.Type.input_var
@@ -43,16 +43,16 @@ defimpl ProtoDef.Compiler.GenElixirAst, for: ProtoDef.Type.Switch do
     end
   end
   def decoder_ast_default_case(item, ctx) do
-    item_ast = ProtoDef.Compiler.GenElixirAst.decoder(item.type, ctx)
+    item_ast = ProtoDef.Gen.Elixir.Protocol.decoder(item.type, ctx)
     quote do
       true -> unquote(item_ast)
     end
   end
   def decoder_ast_case(item, match_var, ctx) do
     match_ast = Macro.escape(item.match)
-    item_ast = ProtoDef.Compiler.GenElixirAst.decoder(item.type, ctx)
+    item_ast = ProtoDef.Gen.Elixir.Protocol.decoder(item.type, ctx)
     quote do
-      ProtoDef.Gen.Elixir.Switch.javascript_eq(unquote(match_ast), unquote(match_var)) -> unquote(item_ast)
+      ProtoDef.Gen.Elixir.Impl.Switch.javascript_eq(unquote(match_ast), unquote(match_var)) -> unquote(item_ast)
     end
     |> hd
   end
@@ -78,16 +78,16 @@ defimpl ProtoDef.Compiler.GenElixirAst, for: ProtoDef.Type.Switch do
     end
   end
   def encoder_ast_default_case(item, ctx) do
-    item_ast = ProtoDef.Compiler.GenElixirAst.encoder(item.type, ctx)
+    item_ast = ProtoDef.Gen.Elixir.Protocol.encoder(item.type, ctx)
     quote do
       true -> unquote(item_ast)
     end
   end
   def encoder_ast_case(item, match_var, ctx) do
     match_ast = Macro.escape(item.match)
-    item_ast = ProtoDef.Compiler.GenElixirAst.encoder(item.type, ctx)
+    item_ast = ProtoDef.Gen.Elixir.Protocol.encoder(item.type, ctx)
     quote do
-      ProtoDef.Gen.Elixir.Switch.javascript_eq(unquote(match_ast), unquote(match_var)) -> unquote(item_ast)
+      ProtoDef.Gen.Elixir.Impl.Switch.javascript_eq(unquote(match_ast), unquote(match_var)) -> unquote(item_ast)
     end
     |> hd
   end

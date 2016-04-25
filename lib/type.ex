@@ -28,8 +28,6 @@ defmodule ProtoDef.Type do
   @callback structure(%{}, ctx) :: term
   @callback assign_vars(struct, pos_integer, ctx) :: struct
   @callback resolve_references(struct, [atom], ctx) :: struct
-  @callback decoder_ast(struct, ctx) :: term
-  @callback encoder_ast(struct, ctx) :: term
 
   def data_var, do: {:data, [], nil}
   def input_var, do: {:input, [], nil}

@@ -1,4 +1,4 @@
-defimpl ProtoDef.Compiler.GenElixirAst, for: ProtoDef.Type.BitField do
+defimpl ProtoDef.Gen.Elixir.Protocol, for: ProtoDef.Type.BitField do
 
   @data_var ProtoDef.Type.data_var
   @input_var ProtoDef.Type.input_var

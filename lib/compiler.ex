@@ -53,10 +53,8 @@ defmodule ProtoDef.Compiler do
     structure = ProtoDef.Compiler.Structure.gen_for_type(descr, ctx)
 
     # Generate the Elixir AST
-    #decoder_ast = ProtoDef.Compiler.GenAst.decoder(descr, ctx)
-    #encoder_ast = ProtoDef.Compiler.GenAst.encoder(descr, ctx)
-    decoder_ast = ProtoDef.Compiler.GenElixirAst.decoder(descr, ctx)
-    encoder_ast = ProtoDef.Compiler.GenElixirAst.encoder(descr, ctx)
+    decoder_ast = ProtoDef.Gen.Elixir.Protocol.decoder(descr, ctx)
+    encoder_ast = ProtoDef.Gen.Elixir.Protocol.encoder(descr, ctx)
 
     %{
       descr: descr,
