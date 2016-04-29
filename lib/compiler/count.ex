@@ -12,10 +12,10 @@ defmodule ProtoDef.Compiler.Count do
       value: cnt,
     }
   end
-  def preprocess(%{"count" => cnt}, _) when is_binary(cnt) do
+  def preprocess(%{"count" => cnt}, ctx) when is_binary(cnt) do
     %__MODULE__{
       kind: :field,
-      value: ProtoDef.Compiler.Preprocess.count_field_ref_dirup(cnt),
+      value: ProtoDef.Compiler.Preprocess.process_field_ref(cnt, ctx),
     }
   end
   def preprocess(%{"countType" => type}, ctx) when type != nil do

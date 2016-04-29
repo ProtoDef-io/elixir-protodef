@@ -41,7 +41,7 @@ defmodule ProtoDef.Type.Switch do
       compare_to_raw: Preprocess.process_field_ref(compare_to, ctx),
       fields: Enum.map(fields, fn {match, type} ->
         %Field{
-          match: match, 
+          match: match,
           type: preprocess_item(type, ctx),
         }
       end),

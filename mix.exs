@@ -29,7 +29,8 @@ defmodule ProtoDef.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:poison, "~> 2.0"}]
+    [{:poison, "~> 2.0"},
+     {:estree, "~> 2.3"}] # TODO: Make this optional in some way (know about :optional, logistics?)
   end
 
   defp description do

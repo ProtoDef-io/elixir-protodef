@@ -18,17 +18,14 @@ defmodule ProtoDef.Compiler.Preprocess do
   end
 
   def process_field_ref(field_ref, ctx, sibling_only \\ false) do
-    proc_ref = count_field_ref_dirup(field_ref)
-    if sibling_only do
-      {0, _} = proc_ref
-    else
-      proc_ref
-    end
+    {num, str} = count_field_ref_dirup(field_ref)
+    if sibling_only, do: 0 = num
+    {num, ctx.parse_name.(str)}
   end
 
   def count_field_ref_dirup(str), do: count_field_ref_dirup(str, 0)
   defp count_field_ref_dirup("../" <> str, num), do: count_field_ref_dirup(str, num+1)
-  defp count_field_ref_dirup(str, num), do: {num, String.to_atom(str)}
+  defp count_field_ref_dirup(str, num), do: {num, str}
 
   def process_count(cont, ctx) do
     ProtoDef.Compiler.Count.preprocess(cont, ctx)
