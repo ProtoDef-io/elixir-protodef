@@ -49,18 +49,4 @@ defmodule ProtoDef.Type.TypeRef do
     descr
   end
 
-  def decoder_ast(%{kind: :simple} = descr, _ctx) do
-    {module, name} = descr.decode
-    quote do
-      apply(unquote(module), unquote(name), [unquote(@data_var)])
-    end
-  end
-  
-  def encoder_ast(%{kind: :simple} = descr, _ctx) do
-    {module, name} = descr.encode
-    quote do
-      apply(unquote(module), unquote(name), [unquote(@input_var)])
-    end
-  end
-
 end
