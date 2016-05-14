@@ -29,32 +29,4 @@ defmodule ProtoDef.Type.Option do
     }
   end
 
-  def decoder_ast(descr, ctx) do
-    item_ast = ProtoDef.Compiler.GenAst.decoder(descr.type, ctx)
-    quote do
-      with do
-        <<has_field::unsigned-integer-1*8, unquote(@data_var)::binary>> = unquote(@data_var)
-        if has_field == 1 do
-          unquote(item_ast)
-        else
-          {nil, unquote(@data_var)}
-        end
-      end
-    end
-  end
-
-  def encoder_ast(descr, ctx) do
-    item_ast = ProtoDef.Compiler.GenAst.encoder(descr.type, ctx)
-    quote do
-      with do
-        has_field = if unquote(@input_var), do: 1, else: 0
-        if has_field == 1 do
-          [<<has_field::1*8>>, unquote(item_ast)]
-        else
-          <<has_field::1*8>>
-        end
-      end
-    end
-  end
-
 end
